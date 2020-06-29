@@ -1,0 +1,15 @@
+*.pyc
+runs/
+*.so
+*.csv
+data/*/input
+data/*/images
+data/*/cameras
+data/*/target
+data/*/sdf
+data/*/sdf_floodfill
+data/*/sdf_multi
+data/*/render
+lightning_logs/
+sparseconvnet
+.idea/
