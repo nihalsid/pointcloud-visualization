@@ -63,11 +63,14 @@ def read_camera(camera_path):
 def project_rgbd_list_to_point_cloud(frame_list_path, frames_directory):
     list_of_frames = [x.strip() for x in Path(frame_list_path).read_text().splitlines() if x.strip() != ""]
     color, depth, intrinsic, extrinsic = [], [], [], []
+    all_3d_locs = []
+    ctr = 0
     for f in list_of_frames:
         color_path = Path(frames_directory) / "color" / f"{f}.jpg"
         depth_path = Path(frames_directory) / "depth" / f"{f}.png"
         camera_path = Path(frames_directory) / "camera" / f"{f}.txt"
         color_image = imread(color_path).astype(np.float32) / 255
+        print(color_path)
         depth_image = imread(depth_path).astype(np.float32) / 1000
         intrinsic_mat, extrinsic_mat = read_camera(camera_path)
         color.append(color_image)
@@ -78,8 +81,8 @@ def project_rgbd_list_to_point_cloud(frame_list_path, frames_directory):
     for i in range(len(list_of_frames)):
         cam_w = torch.from_numpy(extrinsic[i])
         cam_k = torch.from_numpy(intrinsic[i])
-        x = torch.arange(0, depth[i].shape[1])
-        y = torch.arange(0, depth[i].shape[0])
+        x = torch.arange(0, depth[i].shape[0])
+        y = torch.arange(0, depth[i].shape[1])
         x, y = torch.meshgrid(x, y)
         x = x.flatten().float()
         y = y.flatten().float()
@@ -89,9 +92,12 @@ def project_rgbd_list_to_point_cloud(frame_list_path, frames_directory):
         image[1, :] = y * flat_depth
         image[2, :] = flat_depth
         image[3, :] = 1.0
-        loc3d = torch.mm(cam_w, torch.mm(torch.inverse(cam_k), image)).T.numpy()
+        loc3d = torch.mm(cam_w, torch.mm(torch.inverse(dcam_k), image)).T.numpy()
+        all_3d_locs.append(loc3d)
 
+    pointcloud = np.concatenate(all_3d_locs, axis=0)
+    print(pointcloud.shape)
+    points_to_obj(pointcloud, "test_pts.obj")
 
 if __name__ == "__main__":
-    convert_sdf_to_mesh("/mnt/sorona_angela_raid/data/matterport/completion_blocks_2cm_test/individual_96-96-160_s96/2t7WUuJeko7_room0__cmp__0.sdf", "test.obj")
-    print('Done.')
+    project_rgbd_list_to_point_cloud("misc_scripts/data_sdf_to_mesh/2t7WUuJeko7_room0__cmp__0.txt", "misc_scripts/data_sdf_to_mesh/frames_2t7WUuJeko7")
