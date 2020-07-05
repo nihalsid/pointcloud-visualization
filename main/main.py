@@ -118,5 +118,5 @@ def project_rgbd_list_to_point_cloud(sdf_path, frame_list_path, frames_directory
 
 
 if __name__ == "__main__":
-    project_rgbd_list_to_point_cloud("misc_scripts/data_sdf_to_mesh/2t7WUuJeko7_room0__cmp__0.sdf", "misc_scripts/data_sdf_to_mesh/2t7WUuJeko7_room0__cmp__0.txt", "misc_scripts/data_sdf_to_mesh/frames_2t7WUuJeko7")
-    # convert_sdf_to_mesh("misc_scripts/data_sdf_to_mesh/2t7WUuJeko7_room0__cmp__0.sdf", "test_mesh.obj")
+    project_rgbd_list_to_point_cloud("main/data/2t7WUuJeko7_room0__cmp__0.sdf", "main/data/2t7WUuJeko7_room0__cmp__0.txt", "main/data/frames_2t7WUuJeko7")
+    convert_sdf_to_mesh("main/data/2t7WUuJeko7_room0__cmp__0.sdf", "test_mesh.obj")
